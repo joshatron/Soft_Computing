@@ -83,13 +83,13 @@
 % 
 @relation car
 
-@attribute "buying" {"v-high","high","med","low"}
-@attribute "maint" {"v-high","high","med","low"}
-@attribute "doors" {2,3,4,"5-more"}
+@attribute "buying" {"vhigh","high","med","low"}
+@attribute "maint" {"vhigh","high","med","low"}
+@attribute "doors" {2,3,4,"5more"}
 @attribute "persons" {2,4,"more"}
 @attribute "lug_boot" {"small","med","big"}
 @attribute "safety" {"low","med","high"}
-@attribute class {"unacc","acc","good","v-good"}
+@attribute class {"unacc","acc","good","vgood"}
 
 @data
 "vhigh","vhigh",2,2,"small","low","unacc"
