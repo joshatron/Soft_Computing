@@ -28,6 +28,7 @@ $substring = $sampleString;     # Remove comma separated entries sequentially fr
 
 $count = 0;                     # Number of entries processed
 @attributes;                    # Attribute section of final ARFF
+@nom_length;                    # Number of values for each attribute
 
 do {
     $name = "A$count";          # Default name of attribute is A{entry_number}
@@ -78,13 +79,14 @@ do {
         $attributes[$count] = "\@attribute $name string\n";
     }
     
+    $nom_length[$count] = 0;
     $count++;
     $substring = substr($substring, length($replace));
-    
 } while ($sampleString =~ /,/g);    # Loop until we run out of commas
 
 $index = 0; # Index for output data array
 @data_out;  # data section output
+@nom;       # list of possible nominal values
 
 # Loop through every line retrieved from input file
 foreach $substring (@data_in) {
@@ -103,7 +105,25 @@ foreach $substring (@data_in) {
             
         # Else, add quotes to the entry to ensure entry follows ARFF requirements
         } else {
-            $nextLine = "$nextLine,\"$replace\"";
+            chomp($replace);
+            if ($replace =~ m/\s|\%/) {
+                $replace = "\"$replace\"";
+            }
+        }
+        
+        # Check for the presence of the current value of $replace
+        $present = 0;
+        for ($j = 0; $j < $nom_length[$i]; $j++) {
+            if ($nom[$i][$j] eq $replace) {
+                $present++;
+                break;
+            }
+        }
+        
+        # If the value was not found, add it to the list of possible nominal values
+        if ($present == 0) {
+            $nom[$i][$nom_length[$i]] = $replace;
+            $nom_length[$i]++;
         }
         
         $substring =~ s/^[^,]+,//;  # Remove current entry from substring
@@ -114,7 +134,25 @@ foreach $substring (@data_in) {
     $index++;
 }
 
+# Iterate over possible values, switching string attributes to nominals
+# Print the results for users to verify
+@all_nominals;
 print("\nBasic ARFF ready for file write.\n\n");
+print("Types/Values of attributes:\n\n");
+for ($i = 0; $i < $count; $i++) {
+    for ($j = 0; $j < $nom_length[$i]; $j++) {
+        $all_nominals[$i] = "$all_nominals[$i],$nom[$i][$j]";
+    }
+    $all_nominals[$i] =~ s/^,|,$//g;
+    if ($attributes[$i] =~ m/(string)/) {
+        $attributes[$i] = "\@attribute A$i {$all_nominals[$i]}\n";
+        print("$attributes[$i]Possible values: see above\n\n");
+    } else {
+        print("$attributes[$i]");
+        print("Possible values: $all_nominals[$i]\n\n");
+    }
+}
+print("\n");
 
 @header = ();   # Array for possible header info
 
@@ -241,12 +279,21 @@ sub nominal() {
         print("\nAttribute change cancelled.\n\n");
         return;
     }
-    print("Enter every nominal-name separated by commas:\n");
-    print("(e.g. name-1,name 2,name3,...,name-last):\n");
-    $nominals = <STDIN>;
-    chomp($nominals);
-    $nominals =~ s/(\s*,\s*)/\",\"/g;
-    $attributes[$column] = "\@attribute \"$name\" {\"$nominals\"}\n";
+    
+    # Display found values four user verification
+    print("Found values: $all_nominals[$column]. Is this correct? (y/n) ");
+    $in = <STDIN>;
+    chomp($in);
+    if ($in =~ m/y|Y/) {# Values are complete, create nominal
+        $attributes[$column] = "\@attribute \"$name\" {$all_nominals[$column]}\n";
+    } else {            # Values are inclomplete, user must list nominal values
+        print("Enter every nominal-name separated by commas:\n");
+        print("(e.g. name-1,name 2,name3,...,name-last):\n");
+        $nominals = <STDIN>;
+        chomp($nominals);
+        $nominals =~ s/(\s*,\s*)/\",\"/g;
+        $attributes[$column] = "\@attribute \"$name\" {\"$nominals\"}\n";
+    }
     print("\nAttribute changed to:\n$attributes[$column]\n\n");
 }
 
