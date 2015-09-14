@@ -1,0 +1,27 @@
+Tester:     weka.experiment.PairedCorrectedTTester
+Analysing:  Mean_absolute_error
+Datasets:   1
+Resultsets: 9
+Confidence: 0.05 (two tailed)
+Sorted by:  -
+Date:       9/13/15 6:46 PM
+
+
+Dataset                   (1) lazy.IB | (2) lazy (3) baye (4) tree (5) rule (6) func (7) func (8) func (9) meta
+---------------------------------------------------------------------------------------------------------------
+abalone                  (100)   0.06 |   0.06     0.06 *   0.06     0.06 v   0.07 v   0.06     0.06 v   0.06 v
+---------------------------------------------------------------------------------------------------------------
+                              (v/ /*) |  (0/1/0)  (0/0/1)  (0/1/0)  (1/0/0)  (1/0/0)  (0/1/0)  (1/0/0)  (1/0/0)
+
+
+Key:
+(1) lazy.IBk '-K 1 -W 0 -A \"weka.core.neighboursearch.LinearNNSearch -A \\\"weka.core.EuclideanDistance -R first-last\\\"\"' -3080186098777067172
+(2) lazy.IBk '-K 4 -W 0 -A \"weka.core.neighboursearch.LinearNNSearch -A \\\"weka.core.EuclideanDistance -R first-last\\\"\"' -3080186098777067172
+(3) bayes.NaiveBayes -D 5995231201785697655
+(4) trees.J48 '-C 0.25 -M 2' -217733168393644444
+(5) rules.JRip '-F 3 -N 2.0 -O 2 -S 1' -6589312996832147161
+(6) functions.SMO '-C 1.0 -L 0.001 -P 1.0E-12 -N 0 -V -1 -W 1 -K \"functions.supportVector.PolyKernel -E 1.0 -C 250007\"' -6585883636378691736
+(7) functions.MultilayerPerceptron '-L 0.4 -M 0.9 -N 500 -V 0 -S 0 -E 20 -H a' -5990607817048210779
+(8) functions.RBFNetwork '-B 1 -S 1 -R 1.0E-10 -M 3 -W 0.05' -3669814959712675720
+(9) meta.AdaBoostM1 '-P 100 -S 5 -I 15 -W trees.DecisionStump' -1178107808933117974
+
