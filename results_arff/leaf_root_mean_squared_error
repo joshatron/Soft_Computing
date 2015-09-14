@@ -1,4 +1,4 @@
-Tester:     weka.experiment.PairedCorrectedTTester
+0.24Tester:     weka.experiment.PairedCorrectedTTester
 Analysing:  Root_mean_squared_error
 Datasets:   1
 Resultsets: 10
